@@ -1,0 +1,18 @@
+{
+  "theme": "dark",
+  "permissions": {
+    "allow": [
+      "Bash(git status)",
+      "Bash(git diff*)",
+      "Bash(git log*)",
+      "Bash(git branch*)",
+      "Bash(gh pr diff*)",
+      "Bash(gh pr view*)",
+      "Bash(tsc*)",
+      "Bash(npm run *)",
+      "Bash(npx tsc*)",
+      "Bash(find *)",
+      "Bash(grep *)"
+    ]
+  }
+}
