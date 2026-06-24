@@ -13,6 +13,22 @@
       "Bash(npx tsc*)",
       "Bash(find *)",
       "Bash(grep *)"
+    ],
+    "deny": [
+      "Bash(git push*)"
+    ]
+  },
+  "hooks": {
+    "UserPromptSubmit": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "printf '{\"hookSpecificOutput\":{\"hookEventName\":\"UserPromptSubmit\",\"additionalContext\":\"Date: %s\"}}' \"$(date +%Y-%m-%d)\"",
+            "timeout": 5
+          }
+        ]
+      }
     ]
   }
 }
