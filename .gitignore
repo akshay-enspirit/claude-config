@@ -10,3 +10,5 @@
 !skills/
 !skills/*/
 !skills/*/SKILL.md
+!sounds/
+!sounds/*.aiff

@@ -8,6 +8,14 @@
       "Bash(git branch*)",
       "Bash(gh pr diff*)",
       "Bash(gh pr view*)",
+      "Bash(gh issue*)",
+      "Bash(gh milestone*)",
+      "Bash(gh api*)",
+      "Bash(jq *)",
+      "Bash(mkdir -p .claude/specs)",
+      "Bash(grep -qF*)",
+      "Bash(cat CLAUDE.md*)",
+      "Bash(cat docs/*)",
       "Bash(tsc*)",
       "Bash(npm run *)",
       "Bash(npx tsc*)",
@@ -19,6 +27,50 @@
     ]
   },
   "hooks": {
+    "StopFailure": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "afplay /Users/akshay/.claude/sounds/Blow.aiff",
+            "timeout": 5
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "afplay /Users/akshay/.claude/sounds/Blow.aiff",
+            "timeout": 5
+          }
+        ]
+      }
+    ],
+    "PermissionRequest": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "afplay /Users/akshay/.claude/sounds/Blow.aiff",
+            "timeout": 5
+          }
+        ]
+      }
+    ],
+    "PermissionDenied": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "afplay /Users/akshay/.claude/sounds/Blow.aiff",
+            "timeout": 5
+          }
+        ]
+      }
+    ],
     "UserPromptSubmit": [
       {
         "hooks": [
