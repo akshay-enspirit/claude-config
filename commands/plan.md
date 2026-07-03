@@ -27,6 +27,8 @@ Extract:
 
 If a local spec file is referenced and exists, read it for full context.
 
+If any acceptance criterion is ambiguous, list the open questions and ask the user before writing tasks. Do not guess.
+
 Check for an existing plan comment. If one exists, ask: "A plan already exists on this issue. Update it or create a new one?"
 
 ## Phase 2: Explore relevant code
@@ -66,34 +68,22 @@ Decompose into behaviors. Each task = one behavior, one red-green-refactor cycle
 
 **Never write all tests first then all implementation (horizontal slicing).** Each task is complete — test, implementation, and commit — before the next task begins.
 
-For each task:
+The red-green-refactor loop itself lives in `/tdd`. The plan carries only the per-task specifics `/tdd` needs. For each task:
 
 ```markdown
 ### Task N: <Behavior Name>
 
-**Files:**
-- Create/Modify: `exact/path/to/file`
-- Test: `exact/path/to/test`
-
-**Behavior:** One sentence — what observable thing this task proves works.
-
-- [ ] Write failing test
-  ```<lang>
-  <actual test code — not a placeholder>
-  ```
-- [ ] Run: `<exact test command>` — expect: FAIL `"<expected failure message>"`
-- [ ] Write minimal implementation
-  ```<lang>
-  <actual implementation code — not a placeholder>
-  ```
-- [ ] Run: `<exact test command>` — expect: PASS
-- [ ] Refactor if needed (tests must stay green)
-- [ ] `git commit -m "<type>(<scope>): <description>"`
+**Files:** `exact/path/to/file` — test: `exact/path/to/test`
+**Behavior:** One sentence — the observable thing this task proves works.
+**Test asserts:** <inputs → expected output, including the edge case>
+**Expected RED:** `<expected failure message>` from `<exact test command>`
+**Implementation:** <signature/approach in one line; the seam it attaches to>
+**Commit:** `<type>(<scope>): <description>`
 ```
 
 **Rules for task content:**
-- Every code block must contain actual code, never "add implementation here" or similar
-- Every run step must show the exact command and expected output
+- Describe the test and implementation in prose, do not write the code — `/tdd` writes it. State the assertion and approach precisely enough that there is one obvious implementation.
+- The test command must be exact, and pair it with the expected failure message
 - If a later task depends on a type or function defined in an earlier task, use the exact name defined there — no inconsistencies
 - Each commit message follows conventional commits: `feat`, `fix`, `refactor`, `test`, `chore`
 
@@ -104,7 +94,7 @@ Before showing the plan to the user, check:
 1. **Criteria coverage** — does every acceptance criterion from the issue map to at least one task?
 2. **No placeholders** — no TBD, TODO, "similar to above", or vague steps
 3. **Name consistency** — function/type names used in later tasks match what earlier tasks define
-4. **Minimal code** — are any tasks adding behaviour beyond what the test requires? Cut it.
+4. **Minimal scope** — does any task add behaviour beyond the acceptance criteria? Cut it.
 
 Fix issues inline. Do not re-review after fixing.
 
@@ -143,6 +133,6 @@ gh issue edit $ARGUMENTS --add-label "planned" 2>/dev/null || true
 
 ## Rules
 
-- Never post a plan with placeholder code or vague steps — it will mislead the implementing agent
+- Never post a plan with vague or ambiguous steps — it will mislead the implementing agent
 - Tasks run in strict order; later tasks may not assume anything not produced by earlier tasks
 - The plan comment is the source of truth in new sessions — it must be self-contained enough to execute without the spec file
