@@ -5,6 +5,7 @@
 !.gitignore
 !CLAUDE.md
 !settings.json
+!statusline.sh
 !commands/
 !commands/*.md
 !skills/
