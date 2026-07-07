@@ -1,11 +1,11 @@
 ---
 name: e2e
-description: Validate a completed milestone against acceptance criteria by running end-to-end tests.
+description: Validate a completed spec against its acceptance criteria using end-to-end tests. Extends existing tests where possible.
 ---
 
-Validate a completed milestone against acceptance criteria using end-to-end tests.
+Run E2E validation for a completed spec. Anchored to acceptance criteria from the milestone's issues. Run a few times per spec — not per issue, not per task.
 
-Milestone to validate: `$ARGUMENTS`
+Milestone name or number: `$ARGUMENTS`
 
 If `$ARGUMENTS` is empty, ask which milestone to validate.
 
@@ -13,81 +13,97 @@ If `$ARGUMENTS` is empty, ask which milestone to validate.
 Do not claim E2E passes without running the test command and showing the actual output.
 </HARD-GATE>
 
-## Phase 1: Readiness check
+## Phase 1: Confirm readiness
 
 ```bash
-gh milestone view $ARGUMENTS
-gh issue list --milestone $ARGUMENTS --state open
+gh milestone view "$ARGUMENTS"
+gh issue list --milestone "$ARGUMENTS" --state all
 ```
 
-If any issues are still open, stop:
+Check that all issues in the milestone are closed. If open issues remain:
+> "Milestone has N open issues: #X, #Y. E2E is most useful when a vertical slice is complete. Continue anyway, or resolve those first?"
 
-> "Milestone #$ARGUMENTS has open issues. Close or move them before running E2E validation."
+Wait for the user's decision.
 
 ## Phase 2: Collect acceptance criteria
 
 ```bash
-gh issue list --milestone $ARGUMENTS --state closed --limit 100
+gh issue list --milestone "$ARGUMENTS" --state closed --json number,title,body | jq '.[]'
 ```
 
-For each closed issue, fetch its acceptance criteria:
+Extract every acceptance criterion from each issue's "## Acceptance Criteria" section. Build a flat list:
+
+```
+From #12 — <issue title>:
+  - <criterion>
+  - <criterion>
+From #13 — <issue title>:
+  - <criterion>
+```
+
+Also read the local spec if referenced in the issue bodies.
+
+## Phase 3: Audit existing E2E tests
+
+Find existing E2E and integration tests:
+```bash
+find . -type f \( -name "*.e2e.*" -o -name "*.spec.*" -o -path "*/e2e/*" -o -path "*/integration/*" \) \
+  | grep -v node_modules | grep -v .git
+```
+
+Read the relevant ones. For each acceptance criterion, determine:
+- **Already covered** — an existing test verifies this behavior end-to-end
+- **Partially covered** — an existing test touches this area but doesn't fully verify the criterion
+- **Not covered** — no test exercises this behavior
+
+Report the audit before writing anything:
+```
+Criteria coverage:
+  ✓ Already covered: "<criterion>" — <file>:<test name>
+  ~ Extend needed:   "<criterion>" — <file> (partial)
+  ✗ New test needed: "<criterion>"
+```
+
+Only write tests for partially covered and not covered criteria.
+
+## Phase 4: Write or extend tests
+
+**Extend first.** Add to an existing test file when the assertion fits naturally alongside existing tests for the same flow.
+
+**New file only when** the criterion represents a genuinely separate flow with no natural home in existing tests.
+
+E2E tests must:
+- Exercise the system through its real public interface (HTTP, CLI, UI — whatever the actual consumer uses)
+- Not mock internal collaborators
+- Be named after the behavior: `it('allows user to <criterion behavior>')`
+
+Keep tests minimal. One criterion = one focused assertion. Do not add speculative coverage.
+
+## Phase 5: Run and show evidence
 
 ```bash
-gh issue view <number>
+<e2e run command for this project>
 ```
 
-Compile all acceptance criteria into a list, grouped by issue number and title.
+Paste the full output. Do not summarise it.
 
-## Phase 3: Audit test coverage
+**Pristine standard:** zero failures, zero warnings, zero errors. Fix and re-run until clean.
 
-Scan the codebase for existing E2E and integration tests:
+## Phase 6: Report
 
-```bash
-find . -type f -name "*.test.*" -o -name "*.spec.*" -o -name "*.e2e.*" | grep -v node_modules
-```
-
-For each acceptance criterion, categorise it as:
-- **Covered** — an existing test exercises this criterion
-- **Partial** — a test exists but doesn't fully cover the criterion
-- **Missing** — no test covers this criterion
-
-## Phase 4: Implement missing tests
-
-For each missing or partial criterion:
-- Extend the existing test file if the criterion fits a flow already being tested
-- Create a new test file only for a genuinely distinct flow
-
-Tests must:
-- Exercise the real public interface (HTTP, WebSocket, CLI)
-- Not mock internal components — only mock external services (third-party APIs, email, etc.)
-- Assert the observable outcome stated in the acceptance criterion
-
-## Phase 5: Run and capture output
-
-Run the full E2E test suite:
-
-```bash
-<test command for this project>
-```
-
-Paste the complete output. It must show:
-- Zero failures
-- Zero warnings
-- Zero errors
-
-If anything fails, fix it before proceeding.
-
-## Phase 6: Report results
-
-Map test outcomes back to the original criteria:
+Map results back to criteria:
 
 ```
-## E2E Validation: <Milestone Name>
+E2E results — <milestone name>
 
-| # | Criterion | Test | Status |
-|---|-----------|------|--------|
-| #12 | <criterion> | <test file:line> | PASS |
-| #13 | <criterion> | <test file:line> | PASS |
+  ✓ <criterion> — <test name>
+  ✓ <criterion> — <test name>
+  ✗ <criterion> — FAIL: <message>
 
-X criteria, X tests, 0 failures.
+Tests: X passing, Y failing.
+New: N | Extended: M | Already covered: K
 ```
+
+If any criterion fails, stop and report. Do not suggest next steps — let the user decide what to do.
+
+If all pass, report the clean evidence. The user decides whether to run `/review`, open a PR, or continue building.

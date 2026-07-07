@@ -85,5 +85,10 @@
     ]
   },
   "effortLevel": "xhigh",
-  "theme": "dark"
+  "theme": "dark",
+  "statusLine": {
+    "type": "command",
+    "command": "~/.claude/statusline.sh",
+    "padding": 0
+  }
 }
