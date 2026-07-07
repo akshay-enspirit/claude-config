@@ -1,0 +1,89 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(git status)",
+      "Bash(git diff*)",
+      "Bash(git log*)",
+      "Bash(git branch*)",
+      "Bash(gh pr diff*)",
+      "Bash(gh pr view*)",
+      "Bash(gh issue*)",
+      "Bash(gh milestone*)",
+      "Bash(gh api*)",
+      "Bash(jq *)",
+      "Bash(mkdir -p .claude/specs)",
+      "Bash(grep -qF*)",
+      "Bash(cat CLAUDE.md*)",
+      "Bash(cat docs/*)",
+      "Bash(tsc*)",
+      "Bash(npm run *)",
+      "Bash(npx tsc*)",
+      "Bash(find *)",
+      "Bash(grep *)",
+      "mcp__claude_ai_RN_stage__list_schemas",
+      "mcp__claude_ai_RN_stage__execute_query"
+    ],
+    "deny": [
+      "Bash(git push*)"
+    ]
+  },
+  "hooks": {
+    "StopFailure": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "powershell.exe -c \"(New-Object Media.SoundPlayer 'C:\\\\Users\\\\enterpi.LAPTOP-2EAMDTOL\\\\.claude\\\\sounds\\\\Blow.wav').PlaySync()\"",
+            "timeout": 5
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "powershell.exe -c \"(New-Object Media.SoundPlayer 'C:\\\\Users\\\\enterpi.LAPTOP-2EAMDTOL\\\\.claude\\\\sounds\\\\Blow.wav').PlaySync()\"",
+            "timeout": 5
+          }
+        ]
+      }
+    ],
+    "PermissionRequest": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "powershell.exe -c \"(New-Object Media.SoundPlayer 'C:\\\\Users\\\\enterpi.LAPTOP-2EAMDTOL\\\\.claude\\\\sounds\\\\Blow.wav').PlaySync()\"",
+            "timeout": 5
+          }
+        ]
+      }
+    ],
+    "PermissionDenied": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "powershell.exe -c \"(New-Object Media.SoundPlayer 'C:\\\\Users\\\\enterpi.LAPTOP-2EAMDTOL\\\\.claude\\\\sounds\\\\Blow.wav').PlaySync()\"",
+            "timeout": 5
+          }
+        ]
+      }
+    ],
+    "UserPromptSubmit": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "printf '{\"hookSpecificOutput\":{\"hookEventName\":\"UserPromptSubmit\",\"additionalContext\":\"Date: %s\"}}' \"$(date +%Y-%m-%d)\"",
+            "timeout": 5
+          }
+        ]
+      }
+    ]
+  },
+  "effortLevel": "xhigh",
+  "theme": "dark"
+}
